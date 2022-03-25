@@ -23,7 +23,7 @@ export const CREATE_USER = {
 export const DELETE_USER = {
     type: MessageType,
     args: {
-        id: { type: GraphQLString }
+        id: { type: GraphQLID }
     },
     async resolve(parent: any, args: any) {
         const { id } = args;
@@ -37,17 +37,17 @@ export const UPDATE_PASSWORD = {
     type: MessageType,
     args: {
         username: { type: GraphQLString },
-        oldPassword: { type: GraphQLString },
+        currentPassword: { type: GraphQLString },
         newPassword: { type: GraphQLString },
     },
     async resolve(parent: any, args: any) {
-        const { username, oldPassword,newPassword } = args;
+        const { username, currentPassword,newPassword } = args;
         const user = await Users.findOne({ username });
         if (!user) {
             throw new Error("User not found");
         }
         const userPassword = user?.password;
-        if (userPassword === oldPassword) {
+        if (userPassword === currentPassword) {
             await Users.update({ username }, { password: newPassword });
             
             return {successfull: true, message: "Password Updated Successfully"};
